@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kid's Choice Cakes & Chocolates — Bakery</title>
+<meta name="description" content="Kid's Choice Cakes & Chocolates — In-store pickup only." />
+<link rel="icon" href="data:," />
+<style>
+:root{
+  --bg:#fff8fb;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --accent:#ff6fa3;
+  --accent-2:#ffd28a;
+  --accent-3:#9fe6c8;
+  --text:#111827;
+  --glass: rgba(255,255,255,0.7);
+  --radius:14px;
+  --shadow: 0 12px 30px rgba(10,14,20,0.06);
+  --maxw:1200px;
+  --ease: cubic-bezier(.2,.9,.3,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  background:linear-gradient(180deg,#fffaf8 0%, #fff1f6 60%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  line-height:1.4;
+  display:flex;flex-direction:column;min-height:100vh;
+}
+
+/* header */
+.header{
+  position:sticky;top:0;z-index:90;background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(6px);border-bottom:1px solid rgba(0,0,0,0.03);
+  display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  display:flex;flex-direction:column;line-height:1;
+}
+.logo strong{font-size:18px}
+.logo small{font-size:11px;color:var(--muted)}
+.header .nav{display:flex;gap:14px;align-items:center}
+.header .nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600}
+.header .nav a:hover{background:rgba(0,0,0,0.02);color:var(--text)}
+.header .right{display:flex;gap:10px;align-items:center}
+
+/* intro overlay (Netflix-like) */
+.intro{
+  position:fixed;inset:0;background:linear-gradient(180deg,#fffaff 0%, #fff0f6 60%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;
+  overflow:hidden;
+}
+#introCanvas{position:absolute;inset:0;width:100%;height:100%}
+.intro .mascot{
+  width:160px;height:160px;border-radius:999px;background:linear-gradient(180deg,#fff,#ffeef6);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(10,14,30,0.08);
+  transform:scale(0.75);opacity:0;will-change:transform,opacity;
+}
+.intro .mascot img{width:86%;height:86%;object-fit:contain}
+.intro .title{
+  font-weight:900;font-size:28px;margin-top:18px;color:var(--accent);
+  opacity:0;transform:translateY(8px);
+  text-align:center;text-shadow:0 6px 30px rgba(255,111,163,0.08);
+  letter-spacing:-0.6px;
+}
+.intro .tag{margin-top:8px;color:var(--muted);opacity:0;transform:translateY(8px);font-weight:600}
+
+/* main container */
+.container{max-width:var(--maxw);margin:0 auto;width:100%;padding:22px}
+.hero{
+  display:flex;gap:18px;align-items:center;justify-content:space-between;margin-top:18px;
+}
+.hero-left{flex:1}
+.hero-right{width:380px;min-width:220px;border-radius:16px;background:linear-gradient(180deg,#fff,#fffaf2);padding:18px;box-shadow:var(--shadow)}
+.hero h1{font-size:34px;margin:0 0 8px 0}
+.hero p{margin:0;color:var(--muted);font-weight:600}
+.badges{display:flex;gap:8px;margin-top:12px}
+.badge{background:linear-gradient(90deg,#fff,#fff8f8);padding:6px 10px;border-radius:999px;font-weight:700;color:var(--muted);box-shadow:0 6px 20px rgba(10,14,30,0.03)}
+
+/* toolbar & search */
+.toolbar{display:flex;gap:12px;margin-top:18px;align-items:center;flex-wrap:wrap}
+.search{flex:1;display:flex;gap:8px;align-items:center}
+.search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);font-size:15px}
+.select, .filters{display:flex;gap:8px;align-items:center}
+
+/* product grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:20px}
+.card{background:linear-gradient(180deg,#fff,#fffaf2);border-radius:12px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.card .media{height:160px;border-radius:10px;background-size:cover;background-position:center}
+.card h3{margin:0;font-size:16px}
+.card .desc{color:var(--muted);font-size:14px}
+.card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.price{font-weight:900;color:var(--accent)}
+.actions{display:flex;gap:8px}
+
+/* modals/panels */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,7,18,0.45);z-index:1200}
+.modal[aria-hidden="false"]{display:flex}
+.panel{background:white;border-radius:12px;padding:18px;width:min(720px,96%);box-shadow:0 20px 60px rgba(2,6,23,0.5);max-height:86vh;overflow:auto}
+
+/* wishlist panel */
+.sidepanel{position:fixed;right:16px;top:80px;background:white;border-radius:12px;padding:12px;box-shadow:var(--shadow);width:320px;display:none;z-index:1100}
+.sidepanel[aria-hidden="false"]{display:block}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.gallery img{width:100%;height:110px;object-fit:cover;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.06)}
+
+/* footer */
+.footer{margin-top:auto;padding:22px 0;text-align:center;color:var(--muted);font-size:14px}
+
+/* small devices */
+@media (max-width:900px){
+  .hero{flex-direction:column}
+  .hero-right{width:100%}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+}
+
+/* animations — functional and accessible */
+.show{opacity:1;transform:none;transition:transform 700ms var(--ease),opacity 420ms var(--ease)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+
+<div class="intro" id="intro" role="dialog" aria-label="Intro animation">
+  <canvas id="introCanvas" aria-hidden="true"></canvas>
+  <div class="mascot" aria-hidden="true"><img src="c:\Users\Kshitiz Saxena\Documents\main\bakery\version2\logo.png" alt="logo"></div>
+  <div class="title" id="introTitle" aria-hidden="true">Kid's Choice Cakes & Chocolates</div>
+  <div class="tag" id="introTag" aria-hidden="true">Freshly baked smiles — In-store pickup only</div>
+  <button id="skipIntro" style="position:absolute;right:18px;top:18px;padding:8px 12px;border-radius:8px;border:0;background:rgba(255,255,255,0.9);font-weight:700">Skip</button>
+</div>
+
+<header class="header" role="banner">
+  <div class="brand" role="img" aria-label="Kid's choice brand">
+    <div class="logo"><strong>Kid's choice</strong><small>cakes & chocolates</small></div>
+  </div>
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#menu">Menu</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#workshops">Workshops</a>
+    <a href="#about">About</a>
+    <a href="#visit">Visit</a>
+  </nav>
+  <div class="right">
+    <div class="badge" title="No home delivery">❌ No Home Delivery</div>
+    <button id="openWishlist" aria-pressed="false" title="Wishlist">♡ Wishlist</button>
+    <button id="openAccount">Account</button>
+  </div>
+</header>
+
+<main class="container" id="mainContent" aria-live="polite" hidden>
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="hero-left">
+      <h1 id="heroTitle">Baked for smiles — made with love</h1>
+      <p>Signature cakes • Donuts • Handcrafted chocolates • Pickup at counter</p>
+      <div class="badges"><span class="badge">In-store pickup</span><span class="badge" style="background:linear-gradient(90deg,#ffd28a,#ffb6d5)">No Home Delivery</span></div>
+      <div class="toolbar">
+        <div class="search">
+          <input id="searchInput" placeholder="Search cakes, donuts, chocolates..." aria-label="Search menu">
+        </div>
+        <div class="select">
+          <select id="sortSelect" aria-label="Sort products">
+            <option value="popular">Most popular</option>
+            <option value="price-asc">Price low → high</option>
+            <option value="price-desc">Price high → low</option>
+            <option value="new">Newest</option>
+          </select>
+        </div>
+        <div class="filters" role="group" aria-label="Filters">
+          <label><input type="checkbox" value="kids" class="filterCheck"> Kids</label>
+          <label><input type="checkbox" value="eggless" class="filterCheck"> Eggless</label>
+          <label><input type="checkbox" value="vegan" class="filterCheck"> Vegan</label>
+        </div>
+      </div>
+    </div>
+    <aside class="hero-right" aria-hidden="true">
+      <div style="font-weight:800;font-size:18px;margin-bottom:10px">Spotlight</div>
+      <div id="spotlight" style="height:200px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#fff6f9,#fff1f0);display:flex;align-items:center;justify-content:center;flex-direction:column">
+        <div id="spotName" style="font-weight:900;color:var(--accent)">Chocolate truffle cake</div>
+        <div id="spotPrice" style="color:var(--muted);margin-top:6px">₹800</div>
+        <div style="margin-top:12px"><button id="spotPrev">‹</button><button id="spotNext">›</button></div>
+      </div>
+    </aside>
+  </section>
+
+  <section id="menu" aria-labelledby="menuHead">
+    <h2 id="menuHead">Our Menu</h2>
+    <div class="grid" id="productGrid" role="list"></div>
+    <div style="margin-top:18px;display:flex;gap:8px;justify-content:center">
+      <button id="loadMore">Load more</button>
+      <button id="exportData">Export data (JSON)</button>
+      <button id="importData">Import data</button>
+    </div>
+  </section>
+
+  <section id="workshops" aria-labelledby="workHead" style="margin-top:26px">
+    <h2 id="workHead">Workshops & Events</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+      <div style="background:white;padding:12px;border-radius:12px;box-shadow:var(--shadow)">
+        <h3>Kids Cake Decorating</h3>
+        <p>Saturday 10:30 — All materials included. Book in-store.</p>
+        <div style="display:flex;gap:8px"><button class="bookBtn" data-event="cake">Reserve</button></div>
+      </div>
+      <div style="background:white;padding:12px;border-radius:12px;box-shadow:var(--shadow)">
+        <h3>Chocolate Truffle Night</h3>
+        <p>Monthly workshop for adults & teens. In-store reservation required.</p>
+        <div style="display:flex;gap:8px"><button class="bookBtn" data-event="truffle">Reserve</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" aria-labelledby="galleryHead" style="margin-top:26px">
+    <h2 id="galleryHead">Gallery</h2>
+    <div class="gallery" id="galleryGrid"></div>
+  </section>
+
+  <section id="about" aria-labelledby="aboutHead" style="margin-top:26px">
+    <h2 id="aboutHead">About Us</h2>
+    <p>Kid's Choice Cakes & Chocolates is a neighborhood bakery focused on making celebrations sweeter. We prioritize fresh in-store pickup experiences and hands-on workshops. No home delivery.</p>
+  </section>
+
+  <section id="visit" aria-labelledby="visitHead" style="margin-top:26px">
+    <h2 id="visitHead">Visit</h2>
+    <address>
+      Bhuifowanath temple, Pethe wali gali, Bharatpuri colony, Lakhimpur Kheri<br>
+      Open daily: 9:00 AM — 9:00 PM<br>
+      Call: +91-9554928655
+    </address>
+    <div style="margin-top:10px"><button id="getDirections">Get directions</button><button id="callShop">Call</button></div>
+  </section>
+
+  <div class="footer">© <span id="curYear"></span> Kid's Choice Cakes & Chocolates — In-store pickup only</div>
+</main>
+
+<!-- Modals -->
+<div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-labelledby="productModalTitle">
+  <div class="panel" role="document">
+    <h3 id="productModalTitle">Item</h3>
+    <div id="productModalBody"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button id="modalClose">Close</button><button id="addToWishlist">Add to wishlist</button></div>
+  </div>
+</div>
+
+<div class="modal" id="accountModal" aria-hidden="true" role="dialog" aria-labelledby="accountTitle">
+  <div class="panel">
+    <h3 id="accountTitle">Account</h3>
+    <form id="accountForm">
+      <label style="display:block;margin-top:8px">Name<input id="accName" name="name" placeholder="Your name" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)"></label>
+      <label style="display:block;margin-top:8px">Phone<input id="accPhone" name="phone" placeholder="+91" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)"></label>
+      <label style="display:block;margin-top:8px">Email<input id="accEmail" name="email" placeholder="you@example.com" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)"></label>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button type="submit">Save</button><button type="button" id="accCancel">Cancel</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="sidepanel" id="wishlistPanel" aria-hidden="true" role="complementary">
+  <h3>Wishlist</h3>
+  <div id="wishItems" style="margin-top:10px"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button id="clearWishlist">Clear</button></div>
+</div>
+
+<!-- lightbox -->
+<div class="modal" id="lightbox" aria-hidden="true" role="dialog">
+  <div class="panel" style="max-width:980px;display:flex;flex-direction:column;align-items:center">
+    <img id="lbImg" src="" alt="" style="max-width:100%;border-radius:12px">
+    <div id="lbCaption" style="margin-top:8px;color:var(--muted)"></div>
+    <div style="margin-top:12px"><button id="lbClose">Close</button></div>
+  </div>
+</div>
+
+<script>
+/* Utilities */
+const qs = (s, ctx=document)=>ctx.querySelector(s);
+const qsa = (s, ctx=document)=>Array.from(ctx.querySelectorAll(s));
+const el = (t, a={})=>{const e=document.createElement(t);Object.entries(a).forEach(([k,v])=>{if(k==='html') e.innerHTML=v; else if(k==='class') e.className=v; else e.setAttribute(k,v)});return e}
+
+/* Data: generate a catalog of items (meaningful entries) */
+const catalog = (function(){
+  const base = [
+    {id:'p001',title:'Doll cake',cat:'cakes',price:700,tags:['kids'],desc:'Rich layered chocolate cake with fudge frosting.'},
+    {id:'p002',title:'Banana cake',cat:'cakes',price:300,tags:['kids'],desc:'Colorful layers, surprise inside. Per dozen.'},
+    {id:'p003',title:'Dark Chocolate ball',cat:'chocolates',price:620,tags:['gift'],desc:'Hand-painted truffles in seasonal flavors.'},
+    {id:'p004',title:'Vanilla cake',cat:'cakes',price:300,tags:['classic'],desc:'Classic vanilla sponge with Swiss buttercream.'},
+    {id:'p005',title:'Red Velvet Cake',cat:'cakes',price:700,tags:['custom'],desc:'Design your cake with an in-store consultation.'},
+    {id:'p006',title:'Nutty cake',cat:'cakes',price:250,tags:[],desc:'Nutty cake with fudge topping.'}
+  ];
+  const generated = [...base];
+  for(let i=7;i<=50;i++){
+    const n = i.toString().padStart(3,'0');
+    const cat = i%3===0 ? 'cakes' : (i%3===1 ? 'cakes' : 'chocolates');
+    const title = cat==='cakes' ? `Deluxe Cake ${i}` : (cat==='cupcakes' ? `Special Cakes ${i}` : `Chocolate balls ${i}`);
+    generated.push({id:'p'+n,title,cat,price:Math.round(200 + Math.random()*3000),tags: (i%7===0?['vegan']:[]),desc:`Tasty ${title} — handcrafted.`});
+  }
+  return generated;
+})();
+
+/* initial app state */
+const App = {
+  products: catalog,
+  visibleCount: 12,
+  wishlist: JSON.parse(localStorage.getItem('kc_wishlist')||'[]'),
+  account: JSON.parse(localStorage.getItem('kc_account')||'null'),
+  spotlightIndex:0,
+  spotlightTimer:null
+};
+
+/* DOM refs */
+const mainContent = qs('#mainContent');
+const intro = qs('#intro');
+const introCanvas = qs('#introCanvas');
+const introTitle = qs('#introTitle');
+const introTag = qs('#introTag');
+const mascot = qs('.mascot');
+const skipBtn = qs('#skipIntro');
+const productGrid = qs('#productGrid');
+const loadMoreBtn = qs('#loadMore');
+const searchInput = qs('#searchInput');
+const sortSelect = qs('#sortSelect');
+const filterChecks = qsa('.filterCheck');
+const productModal = qs('#productModal');
+const productModalBody = qs('#productModalBody');
+const productModalTitle = qs('#productModalTitle');
+const modalClose = qs('#modalClose');
+const addToWishlistBtn = qs('#addToWishlist');
+const wishlistPanel = qs('#wishlistPanel');
+const openWishlistBtn = qs('#openWishlist');
+const wishItemsDiv = qs('#wishItems');
+const clearWishlistBtn = qs('#clearWishlist');
+const accountModal = qs('#accountModal');
+const openAccountBtn = qs('#openAccount');
+const accountForm = qs('#accountForm');
+const accName = qs('#accName');
+const accPhone = qs('#accPhone');
+const accEmail = qs('#accEmail');
+const accCancel = qs('#accCancel');
+const galleryGrid = qs('#galleryGrid');
+const lb = qs('#lightbox');
+const lbImg = qs('#lbImg');
+const lbCaption = qs('#lbCaption');
+const lbClose = qs('#lbClose');
+const spotPrev = qs('#spotPrev');
+const spotNext = qs('#spotNext');
+const spotName = qs('#spotName');
+const spotPrice = qs('#spotPrice');
+const spotlight = qs('#spotlight');
+const loadMore = qs('#loadMore');
+const exportDataBtn = qs('#exportData');
+const importDataBtn = qs('#importData');
+const bookBtns = qsa('.bookBtn');
+const getDirections = qs('#getDirections');
+const callShop = qs('#callShop');
+const curYear = qs('#curYear');
+
+/* set year */
+if(curYear) curYear.textContent = new Date().getFullYear();
+
+/* rendering functions */
+function renderProducts(reset=false){
+  if(reset) productGrid.innerHTML='';
+  const q = (searchInput.value||'').toLowerCase();
+  const filters = filterChecks.filter(f=>f.checked).map(f=>f.value);
+  let list = App.products.slice();
+  if(q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  if(filters.length) list = list.filter(p=> filters.every(f=>p.tags.includes(f)));
+  const sort = sortSelect.value;
+  if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+  else if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+  else if(sort==='new') list = list.slice().reverse();
+  const toShow = list.slice(0,App.visibleCount);
+  productGrid.innerHTML='';
+  toShow.forEach(p=>{
+    const card = el('div',{class:'card','role':'listitem'});
+    const media = el('div',{class:'media'});
+    const hue = Math.floor(Math.random()*40)+320;
+    media.style.backgroundImage = `linear-gradient(180deg,hsl(${hue}deg 90% 85%), hsl(${hue}deg 60% 70%)), url('https://via.placeholder.com/600x400/${Math.floor(Math.random()*900000).toString(16)}/fff?text=${encodeURIComponent(p.title)}')`;
+    const h = el('h3',{html:p.title});
+    const d = el('div',{class:'desc',html:p.desc});
+    const meta = el('div',{class:'meta'});
+    const pr = el('div',{class:'price',html: '₹' + p.price});
+    const actions = el('div',{class:'actions'});
+    const detailsBtn = el('button',{html:'Details'});
+    detailsBtn.addEventListener('click',()=>openProductModal(p));
+    const wishBtn = el('button',{html: App.wishlist.includes(p.id)?'♥':'♡' });
+    wishBtn.addEventListener('click',()=>toggleWishlist(p.id,wishBtn));
+    actions.appendChild(detailsBtn);actions.appendChild(wishBtn);
+    meta.appendChild(pr);
+    card.appendChild(media);card.appendChild(h);card.appendChild(d);card.appendChild(meta);card.appendChild(actions);
+    productGrid.appendChild(card);
+  });
+}
+
+/* modal control */
+let activeProduct=null;
+function openProductModal(p){
+  activeProduct = p;
+  productModalTitle.textContent = p.title;
+  productModalBody.innerHTML = `<div style="display:flex;gap:12px"><div style="flex:1"><img src="https://via.placeholder.com/420x300" alt="${p.title}" style="width:100%;border-radius:8px"></div><div style="flex:1"><p style="color:var(--muted)">${p.desc}</p><p style="font-weight:900;margin-top:8px">₹${p.price}</p><p style="margin-top:8px"><strong>Pickup only — No Home Delivery</strong></p></div></div>`;
+  productModal.setAttribute('aria-hidden','false');
+}
+modalClose.addEventListener('click',()=>productModal.setAttribute('aria-hidden','true'));
+addToWishlistBtn.addEventListener('click',()=>{
+  if(activeProduct) { addToWishlist(activeProduct.id); productModal.setAttribute('aria-hidden','true'); }
+});
+
+/* wishlist functions */
+function saveWishlist(){
+  localStorage.setItem('kc_wishlist', JSON.stringify(App.wishlist));
+}
+function addToWishlist(id){
+  if(!App.wishlist.includes(id)) App.wishlist.push(id);
+  saveWishlist(); renderWishlist();
+}
+function removeFromWishlist(id){
+  App.wishlist = App.wishlist.filter(x=>x!==id); saveWishlist(); renderWishlist();
+}
+function toggleWishlist(id, btn){
+  if(App.wishlist.includes(id)){ removeFromWishlist(id); if(btn) btn.textContent='♡'; }
+  else{ addToWishlist(id); if(btn) btn.textContent='♥'; }
+}
+function renderWishlist(){
+  wishItemsDiv.innerHTML='';
+  if(App.wishlist.length===0){ wishItemsDiv.innerHTML = '<div style="color:var(--muted)">No items yet</div>'; return; }
+  App.wishlist.forEach(id=>{
+    const p = App.products.find(x=>x.id===id);
+    if(!p) return;
+    const row = el('div',{html:`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0"><div><strong>${p.title}</strong><div style="color:var(--muted);font-size:13px">₹${p.price}</div></div><div><button data-id="${p.id}" class="wishRemove">Remove</button></div></div>`});
+    wishItemsDiv.appendChild(row);
+  });
+  qsa('.wishRemove', wishItemsDiv).forEach(b=>b.addEventListener('click', e=> removeFromWishlist(b.getAttribute('data-id'))));
+}
+openWishlistBtn.addEventListener('click', ()=>{
+  const pressed = openWishlistBtn.getAttribute('aria-pressed')==='true';
+  openWishlistBtn.setAttribute('aria-pressed', String(!pressed));
+  if(!pressed) wishlistPanel.setAttribute('aria-hidden','false'); else wishlistPanel.setAttribute('aria-hidden','true');
+  renderWishlist();
+});
+clearWishlistBtn.addEventListener('click', ()=>{ App.wishlist=[]; saveWishlist(); renderWishlist(); });
+
+/* account */
+if(App.account){ accName.value = App.account.name || ''; accPhone.value = App.account.phone||''; accEmail.value=App.account.email||''; }
+openAccountBtn.addEventListener('click', ()=> accountModal.setAttribute('aria-hidden','false'));
+accCancel.addEventListener('click', ()=> accountModal.setAttribute('aria-hidden','true'));
+accountForm.addEventListener('submit', e=>{ e.preventDefault(); App.account={name:accName.value,phone:accPhone.value,email:accEmail.value}; localStorage.setItem('kc_account', JSON.stringify(App.account)); accountModal.setAttribute('aria-hidden','true'); });
+
+/* gallery data & lightbox */
+const galleryItems = [];
+for(let i=1;i<=12;i++){
+  galleryItems.push({src:`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStaxodtN-Ct7vu4ad_03QPT_hVd35NRf66vA&s`,caption:`Gallery item ${i}`});
+  galleryItems.push({src:`c:\\Users\\Kshitiz Saxena\\Documents\\main\\bakery\\version2\\logo.png`,caption:`Gallery item ${i}`});
+}
+function renderGallery(){
+  galleryGrid.innerHTML='';
+  galleryItems.forEach((g,idx)=>{
+    const f = el('figure',{html:`<img src="${g.src}" alt="${g.caption}" loading="lazy">`});
+    f.querySelector('img').style.height='110px';
+    f.addEventListener('click', ()=> openLightbox(g));
+    galleryGrid.appendChild(f);
+  });
+}
+function openLightbox(g){
+  lbImg.src=g.src; lbCaption.textContent=g.caption; lb.setAttribute('aria-hidden','false');
+}
+lbClose.addEventListener('click', ()=> lb.setAttribute('aria-hidden','true'));
+
+/* search, sort, filters */
+searchInput.addEventListener('input', ()=> renderProducts(true));
+sortSelect.addEventListener('change', ()=> renderProducts(true));
+filterChecks.forEach(ch=>ch.addEventListener('change', ()=> renderProducts(true)));
+
+/* load more & export/import */
+loadMoreBtn.addEventListener('click', ()=>{ App.visibleCount += 12; renderProducts(); });
+exportDataBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(App.products, null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = el('a',{href:url}); a.download='catalog.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+importDataBtn.addEventListener('click', ()=>{
+  const inp = el('input',{type:'file'}); inp.accept='application/json';
+  inp.addEventListener('change',(ev)=>{
+    const f = ev.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{ try{ const json = JSON.parse(r.result); if(Array.isArray(json)) { App.products = json; App.visibleCount=12; renderProducts(true); alert('Imported ' + json.length + ' items'); } } catch(e){ alert('Invalid JSON'); } };
+    r.readAsText(f);
+  });
+  inp.click();
+});
+
+/* spotlight carousel */
+function updateSpotlight(){
+  const p = App.products[App.spotlightIndex % App.products.length];
+  spotName.textContent = p.title;
+  spotPrice.textContent = '₹' + p.price;
+}
+spotPrev.addEventListener('click', ()=>{ App.spotlightIndex = (App.spotlightIndex - 1 + App.products.length)%App.products.length; updateSpotlight(); });
+spotNext.addEventListener('click', ()=>{ App.spotlightIndex = (App.spotlightIndex + 1)%App.products.length; updateSpotlight(); });
+function startSpotlight(){ if(App.spotlightTimer) clearInterval(App.spotlightTimer); App.spotlightTimer = setInterval(()=>{ App.spotlightIndex = (App.spotlightIndex+1)%App.products.length; updateSpotlight(); },4200); }
+startSpotlight();
+
+/* booking buttons */
+bookBtns.forEach(b=>b.addEventListener('click', e=>{
+  const ev = b.getAttribute('data-event');
+  const name = prompt(`Enter your name to reserve for ${ev} workshop:`);
+  if(name){ alert(`Thanks ${name}. Your reservation for ${ev} is noted. Please visit the store to confirm and pay.`) }
+}));
+
+/* directions & call */
+getDirections.addEventListener('click', ()=> window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Kid\'s choice cakes and chocolates, 123 Baker\'s Lane, Sweet Town')));
+callShop.addEventListener('click', ()=> window.location.href = 'tel:+911234567890');
+
+/* keyboard shortcuts */
+document.addEventListener('keydown', e=>{
+  if(e.key === 'w' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); openWishlistBtn.click(); }
+  if(e.key === 'k' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); searchInput.focus(); }
+});
+
+/* initialize UI */
+function initUI(){
+  renderProducts(true);
+  renderGallery();
+  renderWishlist();
+  updateSpotlight();
+  mainContent.hidden = false;
+}
+
+/* Service worker stub (register if available) */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{/* ignore */});
+}
+
+/* Intro animation: Netflix-like streaks adapted for cute pastel look */
+(function playIntro(){
+  const c = introCanvas;
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+  const streaks = [];
+  const sparkles = [];
+  function spawnStreak(){
+    const w = 40 + Math.random()*80;
+    const h = 40 + Math.random()*200;
+    const x = -w;
+    const y = innerHeight*0.3 + (Math.random()-0.5) * innerHeight*0.3;
+    const hue = 320 + Math.random()*40;
+    const speed = 6 + Math.random()*8;
+    streaks.push({x,y,w,h, hue, speed, life:0});
+  }
+  function spawnSparkle(x,y){
+    const v = 1 + Math.random()*2;
+    sparkles.push({x,y,rx:(Math.random()-0.5)*6,ry:(Math.random()-0.5)*6, v, a:1});
+  }
+  let frame=0;
+  function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+    // fade background slight
+    ctx.fillStyle = 'rgba(255,245,250,0.03)';
+    ctx.fillRect(0,0,c.width,c.height);
+    // create a new streak occasionally during intro sequence
+    if(frame%8===0 && streaks.length<16) spawnStreak();
+    // draw streaks
+    for(let i=streaks.length-1;i>=0;i--){
+      const s=streaks[i];
+      s.x += s.speed;
+      s.life += 1;
+      const grad = ctx.createLinearGradient(s.x, s.y, s.x + s.w, s.y + s.h);
+      grad.addColorStop(0, `hsla(${s.hue} 80% 70% / 0)`);
+      grad.addColorStop(0.2, `hsla(${s.hue} 90% 70% / 0.6)`);
+      grad.addColorStop(0.7, `hsla(${s.hue+20} 90% 65% / 0.2)`);
+      grad.addColorStop(1, `hsla(${s.hue+40} 90% 60% / 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y, s.w, s.h, 0, 0, Math.PI*2);
+      ctx.fill();
+      if(Math.random()>0.92) spawnSparkle(s.x + s.w*0.5, s.y + (Math.random()-0.5)*s.h*0.5);
+      if(s.x - s.w > c.width + 200 || s.life > 220) streaks.splice(i,1);
+    }
+    // draw sparkles
+    for(let i=sparkles.length-1;i>=0;i--){
+      const sp=sparkles[i];
+      sp.x += sp.rx; sp.y += sp.ry; sp.v *= 0.99; sp.a -= 0.01;
+      ctx.fillStyle = `rgba(255,255,255,${Math.max(sp.a,0)})`;
+      ctx.beginPath(); ctx.arc(sp.x,sp.y, Math.max(1,sp.v*1.8),0,Math.PI*2); ctx.fill();
+      if(sp.a<=0) sparkles.splice(i,1);
+    }
+    frame++;
+    if(frame < 240) requestAnimationFrame(loop);
+    else endIntroSequence();
+  }
+  // mascot & title animation
+  setTimeout(()=>{ mascot.style.transition='transform 700ms var(--ease),opacity 420ms var(--ease)'; mascot.style.transform='scale(1)'; mascot.style.opacity='1'; }, 280);
+  setTimeout(()=>{ introTitle.style.transition='transform 700ms var(--ease),opacity 420ms var(--ease)'; introTitle.style.transform='translateY(0)'; introTitle.style.opacity='1'; }, 900);
+  setTimeout(()=>{ introTag.style.transition='transform 700ms var(--ease),opacity 420ms var(--ease)'; introTag.style.transform='translateY(0)'; introTag.style.opacity='1'; }, 1300);
+  function endIntroSequence(){
+    intro.style.transition='opacity 420ms var(--ease),visibility 420ms var(--ease)';
+    intro.style.opacity='0';
+    setTimeout(()=>{ intro.style.display='none'; intro.setAttribute('aria-hidden','true'); initUI(); }, 520);
+  }
+  skipBtn.addEventListener('click', ()=>{ endIntroSequence(); });
+  loop();
+})();
+
+/* lightweight local admin panel (password-protected via prompt, stored only in session) */
+let adminSession=false;
+function openAdmin(){
+  const pw = prompt('Enter admin password');
+  if(pw==='sweetbakery'){ adminSession=true; const c=confirm('Open admin panel to edit catalog?'); if(c) openAdminPanel(); }
+  else alert('Wrong password');
+}
+function openAdminPanel(){
+  if(!adminSession) return;
+  const edits = prompt('Type "add" to add a product, "remove:id" to remove, or "list" to see count');
+  if(!edits) return;
+  if(edits==='add'){
+    const title = prompt('Title'); const price = parseInt(prompt('Price')||'0',10) || 0; const cat = prompt('Category')||'cakes';
+    const id = 'p' + String(Math.floor(900+Math.random()*900)).padStart(3,'0');
+    App.products.unshift({id,title,cat,price,tags:[],desc:'Added via admin panel.'});
+    renderProducts(true);
+    alert('Added ' + title);
+  } else if(edits.startsWith('remove:')){ const id = edits.split(':')[1]; App.products = App.products.filter(p=>p.id!==id); renderProducts(true); alert('Removed ' + id); }
+  else if(edits==='list'){ alert('Products: ' + App.products.length); }
+}
+
+/* print pickup receipt (printable invoice) */
+function printReceipt(items, name){
+  const d = new Date().toLocaleString();
+  let html = `<html><head><title>Pickup Receipt</title></head><body><h2>Kid's Choice — Pickup Receipt</h2><p>${d}</p><p><strong>${name||'Guest'}</strong></p><table border="1" cellpadding="8" cellspacing="0"><tr><th>Item</th><th>Price</th></tr>`;
+  let total=0;
+  items.forEach(it=>{ html += `<tr><td>${it.title}</td><td>₹${it.price}</td></tr>`; total+=it.price; });
+  html += `<tr><td><strong>Total</strong></td><td><strong>₹${total}</strong></td></tr></table><p>Pickup at Counter. No Home Delivery.</p></body></html>`;
+  const w = window.open('','receipt');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+
+/* keyboard focus improvements */
+document.addEventListener('keydown', e=>{
+  if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); searchInput.focus(); }
+});
+
+/* small onboarding: if first time, show welcome toast */
+// if(!localStorage.getItem('kc_seen_welcome')){ setTimeout(()=> alert('Welcome! Note: We do not provide home delivery — in-store pickup only.'),900); localStorage.setItem('kc_seen_welcome','1'); }
+
+/* init call (if intro skipped earlier) */
+if(window.location.hash === '#skipintro'){ qs('#intro').style.display='none'; initUI(); }
+
+</script>
+</body>
+</html>
