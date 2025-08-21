@@ -261,7 +261,7 @@ body{
     </div>
   </section>
 
-  <section id="workshops" aria-labelledby="workHead" style="margin-top:26px">
+  /*<section id="workshops" aria-labelledby="workHead" style="margin-top:26px">
     <h2 id="workHead">Workshops & Events</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
       <div style="background:white;padding:12px;border-radius:12px;box-shadow:var(--shadow)">
@@ -270,12 +270,12 @@ body{
         <div style="display:flex;gap:8px"><button class="bookBtn" data-event="cake">Reserve</button></div>
       </div>
       <div style="background:white;padding:12px;border-radius:12px;box-shadow:var(--shadow)">
-        <h3>Chocolate Truffle Night</h3>
+        <h3>Chocolates</h3>
         <p>Monthly workshop for adults & teens. In-store reservation required.</p>
         <div style="display:flex;gap:8px"><button class="bookBtn" data-event="truffle">Reserve</button></div>
       </div>
     </div>
-  </section>
+  </section>*/
 
   <section id="gallery" aria-labelledby="galleryHead" style="margin-top:26px">
     <h2 id="galleryHead">Gallery</h2>
@@ -514,7 +514,7 @@ accountForm.addEventListener('submit', e=>{ e.preventDefault(); App.account={nam
 const galleryItems = [];
 for(let i=1;i<=12;i++){
   galleryItems.push({src:`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStaxodtN-Ct7vu4ad_03QPT_hVd35NRf66vA&s`,caption:`Gallery item ${i}`});
-  galleryItems.push({src:`c:\\Users\\Kshitiz Saxena\\Documents\\main\\bakery\\version2\\logo.png`,caption:`Gallery item ${i}`});
+  galleryItems.push({src:`logo.png`,caption:`Gallery item ${i}`});
 }
 function renderGallery(){
   galleryGrid.innerHTML='';
@@ -716,6 +716,7 @@ if(window.location.hash === '#skipintro'){ qs('#intro').style.display='none'; in
 </script>
 </body>
 </html>
+
 
 
 
