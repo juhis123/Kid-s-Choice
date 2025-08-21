@@ -452,7 +452,7 @@ accountForm.addEventListener('submit', e=>{ e.preventDefault(); App.account={nam
 const galleryItems = [];
 for(let i=1;i<=12;i++){
   galleryItems.push({src:`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStaxodtN-Ct7vu4ad_03QPT_hVd35NRf66vA&s`,caption:`Gallery item ${i}`});
-  galleryItems.push({src:`c:\\Users\\Kshitiz Saxena\\Documents\\main\\bakery\\version2\\logo.png`,caption:`Gallery item ${i}`});
+  galleryItems.push({src:`logo.png`,caption:`Gallery item ${i}`});
 }
 function renderGallery(){
   galleryGrid.innerHTML='';
@@ -654,3 +654,4 @@ if(window.location.hash === '#skipintro'){ qs('#intro').style.display='none'; in
 </script>
 </body>
 </html>
+
