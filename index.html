@@ -7,6 +7,68 @@
 <meta name="description" content="Kid's Choice Cakes & Chocolates — In-store pickup only." />
 <link rel="icon" href="data:," />
 <style>
+    /* ===== Mobile Friendly CSS ===== */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent sideways scroll */
+}
+
+/* Make all images and videos responsive */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive text sizes */
+h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+}
+
+/* General container adjustments */
+.container {
+  width: 100%;
+  max-width: 1200px; /* Keep desktop look */
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  header, nav, section, footer {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 0 8px;
+  }
+
+  /* Example: stack columns instead of side-by-side */
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  button, input {
+    width: 100%; /* Full width controls */
+  }
+}
+
 :root{
   --bg:#fff8fb;
   --card:#ffffff;
@@ -130,7 +192,7 @@ body{
 
 <div class="intro" id="intro" role="dialog" aria-label="Intro animation">
   <canvas id="introCanvas" aria-hidden="true"></canvas>
-  <div class="mascot" aria-hidden="true"><img src="logo.png" alt="logo"></div>
+  <div class="mascot" aria-hidden="true"><img src="c:\Users\Kshitiz Saxena\Documents\main\bakery\version2\logo.png" alt="logo"></div>
   <div class="title" id="introTitle" aria-hidden="true">Kid's Choice Cakes & Chocolates</div>
   <div class="tag" id="introTag" aria-hidden="true">Freshly baked smiles — In-store pickup only</div>
   <button id="skipIntro" style="position:absolute;right:18px;top:18px;padding:8px 12px;border-radius:8px;border:0;background:rgba(255,255,255,0.9);font-weight:700">Skip</button>
@@ -452,7 +514,7 @@ accountForm.addEventListener('submit', e=>{ e.preventDefault(); App.account={nam
 const galleryItems = [];
 for(let i=1;i<=12;i++){
   galleryItems.push({src:`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStaxodtN-Ct7vu4ad_03QPT_hVd35NRf66vA&s`,caption:`Gallery item ${i}`});
-  galleryItems.push({src:`logo.png`,caption:`Gallery item ${i}`});
+  galleryItems.push({src:`c:\\Users\\Kshitiz Saxena\\Documents\\main\\bakery\\version2\\logo.png`,caption:`Gallery item ${i}`});
 }
 function renderGallery(){
   galleryGrid.innerHTML='';
@@ -512,7 +574,7 @@ bookBtns.forEach(b=>b.addEventListener('click', e=>{
 }));
 
 /* directions & call */
-getDirections.addEventListener('click', ()=> window.open('https://www.google.com/maps/@27.9569538,80.7720557,17z?entry=ttu&g_ep=EgoyMDI1MDgxOC4wIKXMDSoASAFQAw%3D%3D')));
+getDirections.addEventListener('click', ()=> window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Kid\'s choice cakes and chocolates, 123 Baker\'s Lane, Sweet Town')));
 callShop.addEventListener('click', ()=> window.location.href = 'tel:+911234567890');
 
 /* keyboard shortcuts */
@@ -654,6 +716,8 @@ if(window.location.hash === '#skipintro'){ qs('#intro').style.display='none'; in
 </script>
 </body>
 </html>
+
+
 
 
 
